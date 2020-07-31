@@ -1,6 +1,7 @@
 import numpy as np
 import scipy as sc
 import matplotlib.pyplot as plt
+from numpy import linalg as lng
 from scipy import linalg
 from scipy.sparse import random
 
@@ -16,7 +17,7 @@ class Reservoir:
 		self.W_intern = random(Number_Neurons, Number_Neurons, density=connectivity).A
 		eigenvalues = linalg.eigvals(self.W_intern)
 		spectral_radius = eigenvalues.max()
-		self.W_intern = self.W_intern/(1.05 * abs(spectral_radius))
+		self.W_intern = self.W_intern/(1.02 * abs(spectral_radius))
 		if feedback != 0:
 			self.W_feedback = random(Number_Neurons, Output_dim, density=connectivity).A
 
@@ -58,6 +59,10 @@ class ESN_Reservoir(object):
 
 			if steppystep % 10 == 0:
 				print('\rTraining-Progress: {}%'.format(np.round((steppystep+1)/self.steps * 100.), 2), end='')
+
+		#print(self.z.shape)
+		#print(desired_Output.shape)
+		#self.ReadOut = lng.lstsq(self.z, desired_Output)[0]
 
 		self.ReadOut = (np.dot(desired_Output, linalg.pinv(self.z)))
 		self.Result = np.dot(self.ReadOut, self.z)

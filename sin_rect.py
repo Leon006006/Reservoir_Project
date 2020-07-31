@@ -13,14 +13,16 @@ def recti():
     return value
 
 
-steps = 200
-Neurons = 2000
-interval_count = 40
-connectivity = 0.02
+np.random.seed(4121)
+steps = 50
+Neurons = 1000
+interval_count = 100
+connectivity = 0.01
 feedback = 0
 
 pi_Interval = np.linspace(0, np.pi, steps).reshape(steps, 1)
 Interval_complete = np.linspace(0, interval_count * np.pi, interval_count * steps).reshape(interval_count * steps, 1)
+noise = np.random.normal(0, 0.005, pi_Interval.shape)
 sin_vec = np.sin(pi_Interval)
 rect_vec = recti()
 
@@ -41,9 +43,10 @@ for interval in range(0, interval_count - 1):
         guess_inp = np.concatenate((guess_inp, sin_vec), axis=0)
         correct_guess = np.concatenate((correct_guess, np.full((steps, 1), 0)), axis=0)
 
-training_data_inp = np.concatenate((Interval_complete, x), axis=1)
+# training_data_inp = np.concatenate((Interval_complete, x), axis=1)
+training_data_inp = x
 
-Reservoir1 = Reservoir_ESN_1_0.Reservoir(Neurons, 2, 1, connectivity, feedback)
+Reservoir1 = Reservoir_ESN_1_0.Reservoir(Neurons, training_data_inp.shape[1], 1, connectivity, feedback)
 ReservoirComp = Reservoir_ESN_1_0.ESN_Reservoir(Reservoir1, interval_count * steps)
 
 ReservoirComp.train(training_data_inp.T, training_data_out.T)
@@ -54,12 +57,13 @@ plt.plot(Interval_complete, ReservoirComp.Result.T)
 plt.legend(["Sine-Rect-Pulse", "Correct Result", "Trained Result"])
 plt.show()
 
-guessing_data_inp = np.concatenate(
-    (Interval_complete + interval_count * np.pi + ReservoirComp.time_per_step, guess_inp), axis=1)
+# guessing_data_inp = np.concatenate((Interval_complete + interval_count * np.pi + ReservoirComp.time_per_step,
+# guess_inp), axis=1)
+guessing_data_inp = guess_inp
 guessed_Result = ReservoirComp.guess(guessing_data_inp.T)
 
-plt.plot(guessing_data_inp[:, 0], guessing_data_inp[:, 1])
-plt.plot(guessing_data_inp[:, 0], correct_guess)
-plt.plot(guessing_data_inp[:, 0], guessed_Result.T)
+plt.plot(Interval_complete, guessing_data_inp[:, 0])
+plt.plot(Interval_complete, correct_guess)
+plt.plot(Interval_complete, guessed_Result.T)
 plt.legend(["Sine-Rect-Pulse", "Correct Result", "Reservoir Result"])
 plt.show()
