@@ -14,9 +14,9 @@ def recti():
 
 
 np.random.seed(4121)
-steps = 50
+steps = 200
 Neurons = 1000
-interval_count = 100
+interval_count = 20
 connectivity = 0.01
 feedback = 0
 
