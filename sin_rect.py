@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import Reservoir_ESN_1_0
-
+from numpy import linalg
 
 def recti():
     value = np.linspace(0, np.pi, steps).reshape(steps, 1)
@@ -13,11 +13,11 @@ def recti():
     return value
 
 
-np.random.seed(4121)
-steps = 50
+np.random.seed(20)
+steps = 100
 Neurons = 1000
 interval_count = 100
-connectivity = 0.01
+connectivity = 0.04
 feedback = 0
 
 pi_Interval = np.linspace(0, np.pi, steps).reshape(steps, 1)
@@ -54,13 +54,19 @@ ReservoirComp.train(training_data_inp.T, training_data_out.T)
 plt.plot(Interval_complete, x)
 plt.plot(Interval_complete, training_data_out)
 plt.plot(Interval_complete, ReservoirComp.Result.T)
-plt.legend(["Sine-Rect-Pulse", "Correct Result", "Trained Result"])
+plt.legend(["Sine-Rect-Pulse", "Correct Result", "Reservoir Training Result"])
 plt.show()
+
+training_error = ((training_data_out - ReservoirComp.Result.T)**2).mean()
+print('\r{}'.format(training_error))
 
 # guessing_data_inp = np.concatenate((Interval_complete + interval_count * np.pi + ReservoirComp.time_per_step,
 # guess_inp), axis=1)
 guessing_data_inp = guess_inp
 guessed_Result = ReservoirComp.guess(guessing_data_inp.T)
+
+test_error = ((correct_guess - guessed_Result.T)**2).mean()
+print('\r{}'.format(test_error))
 
 plt.plot(Interval_complete, guessing_data_inp[:, 0])
 plt.plot(Interval_complete, correct_guess)
